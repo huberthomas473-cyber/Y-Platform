@@ -9,6 +9,12 @@ before voting.
 document the gap between what people want and what governments do — and to make
 that gap visible and hard to ignore.
 
+> **New here? Want to help?** Read **[ROADMAP.md](ROADMAP.md)** — a
+> plain-language guide to where the project stands, what needs to be done
+> next, and the volunteer roles needed (most of them need no coding).
+> For how Y compares to everything that's been tried before, see
+> [docs/similar-platforms.md](docs/similar-platforms.md).
+
 ## Stack
 
 | Layer | Choice | Why |
@@ -114,6 +120,10 @@ it a 60s timeout for the Claude call).
   are still inline — extract them when translation actually starts.
 
 ## Known limitations / roadmap
+
+The full plain-language roadmap — phases, volunteer roles, and the strategy
+behind them — lives in **[ROADMAP.md](ROADMAP.md)**. The short technical
+version:
 
 - Identity verification (one-person-one-vote) — unsolved, phase 2+.
 - Vote tampering via crafted API calls is possible with anonymous device
