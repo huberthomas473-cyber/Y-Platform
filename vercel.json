@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/deliberate.js": {
+      "maxDuration": 60
+    }
+  }
+}
