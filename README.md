@@ -78,7 +78,27 @@ it is not the product.
    Postgres and survive refreshes, devices, and deploys. Counts start from zero —
    real deployments get no fake baseline.
 
-### 2. Anthropic (Deliberate section)
+### 2. Auth — sign-in for voting (Phase 1)
+
+Voting requires an account (one confirmed email = one account = one vote per
+issue), and votes are written only by the `/api/vote` endpoint — the browser
+has no write access to the votes table.
+
+1. **Existing projects** (that ran an older `setup.sql`): run
+   [`supabase/phase1-auth.sql`](supabase/phase1-auth.sql) once in the SQL
+   Editor. It locks down vote policies and (by default) resets pre-auth device
+   votes — read its comments first. Fresh projects skip this; `setup.sql` now
+   includes the end-state.
+2. In the dashboard, open **Authentication → URL Configuration** and set the
+   **Site URL** to where the app runs (`http://localhost:5173` in dev; your
+   production URL once deployed). Confirmation and reset emails link there.
+3. Leave **Confirm email** ON (Authentication → Sign In / Up → Email). It's the
+   default, and "one account = one email" depends on it.
+4. Email sending uses Supabase's built-in service, which is fine for a pilot
+   but strictly rate-limited (a handful of emails per hour). Configure custom
+   SMTP (Authentication → Emails) before any real launch.
+
+### 3. Anthropic (Deliberate section)
 
 1. Create an API key at [platform.claude.com](https://platform.claude.com).
 2. Set `ANTHROPIC_API_KEY` in `.env`.
@@ -86,7 +106,7 @@ it is not the product.
 The key is only ever read by `api/deliberate.js` on the server. If it's missing
 the rest of the app works and the chat shows a clear "not configured" notice.
 
-### 3. Deploy to Vercel
+### 4. Deploy to Vercel
 
 ```bash
 npx vercel
@@ -99,13 +119,18 @@ it a 60s timeout for the Claude call).
 
 ## Design decisions worth knowing
 
-- **Votes**: one row per (issue, device), enforced by a unique constraint;
-  changing your vote is an upsert. Aggregates come from a database view so the
-  client never processes raw votes.
-- **Anti-duplicate voting is deliberately minimal**: a random UUID per browser
-  (`localStorage`). Clearing storage creates a new "voter". Real
-  one-person-one-vote identity is a known unsolved problem and explicitly
-  phase-2 — the code comments mark every place this matters.
+- **Votes**: one row per (issue, account), enforced by a unique constraint;
+  changing your vote is an upsert. Writes happen only in `/api/vote`, which
+  verifies the Supabase session token, rate-limits (per IP, per user, plus a
+  per-issue cooldown in the DB), and uses the service-role key — RLS gives
+  browsers zero write access. Aggregates come from an owner-rights database
+  view that exposes counts only; signed-in users can read just their own rows.
+- **Anti-duplicate voting is account-based (Phase 1)**: one confirmed email =
+  one account = one vote per issue. Deliberately still not one-vote-per-PERSON
+  — multiple email addresses defeat it, and the app says so on the page ("How
+  voting works"). Real identity verification is a known unsolved problem and a
+  later phase. The old per-device UUID remains only for demo mode and private
+  deliberation sessions.
 - **Deliberation privacy**: `deliberation_messages` has RLS enabled with *no*
   public policies. Only the serverless function (service-role key) touches it,
   so no participant can read another's conversation.
@@ -125,10 +150,11 @@ The full plain-language roadmap — phases, volunteer roles, and the strategy
 behind them — lives in **[ROADMAP.md](ROADMAP.md)**. The short technical
 version:
 
-- Identity verification (one-person-one-vote) — unsolved, phase 2+.
-- Vote tampering via crafted API calls is possible with anonymous device
-  identity; next hardening step is moving vote writes behind a server endpoint
-  with rate limiting.
+- Identity verification (one-person-one-vote) — unsolved, phase 2+. Email
+  accounts raise the cost of cheating but do not equal people.
+- ~~Vote tampering via crafted API calls~~ — closed in Phase 1 (Aug 2026):
+  votes write only through `/api/vote` (session-verified, rate-limited);
+  RLS blocks all client writes to the votes table.
 - Discrepancy and transparency rows are curated seed data (August 2026) with
   source fields — verify every claim and link before public launch. The
   transparency schema is built to take real sourced records without redesign.

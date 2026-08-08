@@ -77,15 +77,18 @@ browser", which is easy to trick. The goal is not perfect identity
 verification (nobody on Earth has solved that) — the goal is making cheating
 *hard enough* that Y's numbers are defensible.
 
-- [ ] **Move vote-counting behind a guarded door.** (Technically: votes should
-      be written by a server endpoint with rate limiting, not directly from
-      the browser.) This stops the simplest mass-cheating scripts.
-- [ ] **Add simple sign-in with an email address.** One account = one email.
-      Still not perfect, but a big step up from "one vote per browser", and
-      it's what most petition platforms use.
-- [ ] **Show our honesty on the page.** Publish, on the site itself, exactly
-      how voting works and what its limits are. Y's credibility strategy is
-      radical transparency about its own weaknesses.
+- [x] **Move vote-counting behind a guarded door.** Done (Aug 2026): all
+      votes go through `/api/vote`, which verifies the session token,
+      rate-limits per IP/user plus a per-issue cooldown, and is the only
+      write path (RLS blocks client writes entirely).
+- [x] **Add simple sign-in with an email address.** Done (Aug 2026):
+      Supabase Auth with email + password and email confirmation; one
+      account = one confirmed email = one vote per issue. UI adapted from
+      the Supabase UI Library (shadcn/ui) auth block.
+- [x] **Show our honesty on the page.** Done (Aug 2026): the Referendum
+      section ends with "How voting works — and its limits", which states
+      plainly that emails are not people and results are an indicative
+      signal, not a certified election.
 - [ ] **Polish the phone experience.** Most users will be on phones. Test
       every screen on a cheap Android phone, not just a MacBook.
 - [ ] **Accessibility check.** Can a blind user with a screen reader vote? Can
@@ -102,22 +105,23 @@ This is the biggest volume of work in the whole project and it needs zero
 programming. It attacks enemy #2 (credibility). Think of it as running a tiny,
 very careful newsroom.
 
-- [ ] **Verify or replace every existing claim.** Each of the six issues has a
-      "what governments actually do" statement and transparency entries. Every
-      single one needs a checkable source (an official document, a reputable
-      news report, a court record) — or it gets deleted.
-- [ ] **Write an editorial rulebook.** One page: what counts as a source, how
-      an issue gets worded neutrally, who signs off. (The strictly neutral
-      wording of ballot questions is its own skill — political science
-      students will recognize this problem.)
-- [ ] **Build the source library issue by issue.** For each ballot issue:
-      the public-opinion research that exists, the official government
-      positions, the money trail. Existing free databases do the heavy
-      lifting — OpenSecrets, OpenCorporates, LittleSis, the ICIJ Offshore
-      Leaks database (all listed with links in
-      [docs/similar-platforms.md](docs/similar-platforms.md)).
+- [x] **Verify or replace every existing claim.** ✅ *Done 7 Aug 2026 — all 12
+      rows (6 positions + 6 transparency) verified against primary/reputable
+      sources; two corrected (Gaza status figures, Elbit fund history), one
+      unverifiable citation deleted. Logs: [docs/source-library/](docs/source-library/).
+      Run `supabase/phase2-content.sql` to update a live database.*
+- [x] **Write an editorial rulebook.** ✅ *Done — one page:
+      [docs/editorial-rulebook.md](docs/editorial-rulebook.md). Note its §4:
+      the `gaza-humanitarian` ballot question is flagged for retire-and-replace
+      (its "until there is a ceasefire" premise is stale since Oct 2025) — a
+      product decision awaiting sign-off.*
+- [~] **Build the source library issue by issue.** *Structure + verification
+      logs + money-trail starting points done ([docs/source-library/](docs/source-library/));
+      public-opinion research per issue is still marked OPEN in each log —
+      that's the standing volunteer research queue.*
 - [ ] **Add new issues carefully.** Better five bulletproof issues than fifty
-      shaky ones.
+      shaky ones. *Process now defined in the rulebook (§5): research file
+      first, then two-person wording review, then ballot.*
 
 **Who can do this:** students of political science, journalism, law,
 economics, international relations. This is real investigative research
@@ -130,22 +134,23 @@ This attacks enemy #3, the one that killed everyone else: nobody shows up,
 nothing happens. The research points to a clear strategy — **don't launch
 globally, launch on ONE issue where Y can win.**
 
-- [ ] **Pick the launch issue.** The strongest candidate on the current
-      ballot: Beach Access in Jamaica — a real, live national debate with a
-      bounded audience and existing advocacy groups who would *bring* their
-      members to vote. One issue where Y's numbers get quoted in a newspaper
-      or a parliament is worth more than six issues nobody sees.
-- [ ] **Define the consequence.** Decide and publish what happens at 75%:
-      for example, Y formally delivers the result and its evidence dossier to
-      the relevant government body — and then publicly documents their
-      response *or their silence*. (A German platform, abgeordnetenwatch.de,
-      built real power with exactly this publish-the-silence move.)
-- [ ] **Partner, don't broadcast.** Every platform that ever reached scale was
-      carried by organizations that already had members. List and contact the
-      NGOs, student unions, and community groups who care about the launch
-      issue.
-- [ ] **Press kit.** One page explaining Y, its numbers, and its limits, ready
-      for journalists — written *before* they ask.
+- [x] **Pick the launch issue.** ✅ *Beach Access in Jamaica — picked and live:
+      pinned first on the ballot with a "Launch issue" tag. Launch pack:
+      [docs/launch/](docs/launch/README.md).*
+- [x] **Define the consequence.** ✅ *Published as [the 75% Rule
+      (v1.0)](docs/launch/the-75-percent-rule.md): ≥75% of decided votes with a
+      1,000-vote floor → result + evidence dossier delivered to the ministry
+      responsible for the BAMP and NEPA/NRCA, copied to the Opposition; response
+      — or documented silence — published within 30 days. Linked from the
+      ballot card itself.*
+- [~] **Partner, don't broadcast.** *List researched and sequenced
+      ([docs/launch/partners-jamaica.md](docs/launch/partners-jamaica.md)):
+      JaBBEM first, then JET, then the Fishermen Co-operative Union.
+      **Contacting them is human work and needs an owner — this workstream
+      still needs its leader.***
+- [x] **Press kit.** ✅ *One page, limits stated plainly:
+      [docs/launch/press-kit.md](docs/launch/press-kit.md). Fill the contact
+      slot before distribution.*
 
 **Who can do this:** students of communications, marketing, politics; anyone
 who has organized anything. This workstream needs a leader as much as the code

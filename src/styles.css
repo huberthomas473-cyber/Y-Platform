@@ -783,3 +783,95 @@ body {
     flex-direction: column;
   }
 }
+
+/* ---------- account (Phase 1: email sign-in) ---------- */
+
+.account {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.account-email {
+  font-size: 13px;
+  color: var(--muted);
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-btn {
+  appearance: none;
+  background: none;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 2px;
+  padding: 7px 14px;
+  cursor: pointer;
+}
+
+.account-btn:hover {
+  background: var(--gold-soft);
+  border-color: var(--gold);
+}
+
+/* ---------- "How voting works" transparency block ---------- */
+
+.methods {
+  margin-top: 28px;
+}
+
+.methods-summary {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.methods-summary:hover {
+  color: var(--ink);
+}
+
+.methods-body {
+  margin-top: 14px;
+  display: grid;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  max-width: 70ch;
+}
+
+/* ---------- Phase 3 launch treatment (docs/launch/) ---------- */
+
+.tag-launch {
+  color: var(--paper);
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.launch-note {
+  margin: 14px 0 2px;
+  padding: 10px 14px;
+  background: var(--gold-soft);
+  border-left: 3px solid var(--gold);
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.launch-note a {
+  color: var(--gold);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

@@ -1,0 +1,67 @@
+/* Y — CSS entry point.
+ *
+ * Layer order matters: `app` (styles.css, the hand-rolled design system) sits
+ * ABOVE Tailwind's preflight (`base`) so existing styles win over the reset,
+ * but BELOW `utilities` so Tailwind classes work inside shadcn components.
+ * styles.css's `* { margin: 0; padding: 0 }` would otherwise beat every
+ * Tailwind spacing utility (unlayered CSS outranks all layers).
+ */
+@layer theme, base, app, components, utilities;
+
+@import 'tailwindcss';
+@import './styles.css' layer(app);
+
+/* shadcn/ui design tokens, mapped onto Y's palette (see styles.css :root).
+ * Prefixed --ui-* so they can never collide with the app's own custom
+ * properties (--muted, --card, ...). Light theme only — the app has a single
+ * ink-on-cream register. */
+:root {
+  --ui-background: #f4efe3;
+  --ui-foreground: #191512;
+  --ui-card: #faf6ec;
+  --ui-card-foreground: #191512;
+  --ui-popover: #faf6ec;
+  --ui-popover-foreground: #191512;
+  --ui-primary: #191512;
+  --ui-primary-foreground: #faf6ec;
+  --ui-secondary: #ece5d2;
+  --ui-secondary-foreground: #191512;
+  --ui-muted: #ece5d2;
+  --ui-muted-foreground: #7b7161;
+  --ui-accent: rgba(168, 128, 31, 0.14);
+  --ui-accent-foreground: #191512;
+  --ui-destructive: #8c3b2e;
+  --ui-destructive-foreground: #faf6ec;
+  --ui-border: rgba(25, 21, 18, 0.16);
+  --ui-input: rgba(25, 21, 18, 0.4);
+  --ui-ring: #a8801f;
+  --ui-radius: 2px;
+}
+
+@theme inline {
+  --color-background: var(--ui-background);
+  --color-foreground: var(--ui-foreground);
+  --color-card: var(--ui-card);
+  --color-card-foreground: var(--ui-card-foreground);
+  --color-popover: var(--ui-popover);
+  --color-popover-foreground: var(--ui-popover-foreground);
+  --color-primary: var(--ui-primary);
+  --color-primary-foreground: var(--ui-primary-foreground);
+  --color-secondary: var(--ui-secondary);
+  --color-secondary-foreground: var(--ui-secondary-foreground);
+  --color-muted: var(--ui-muted);
+  --color-muted-foreground: var(--ui-muted-foreground);
+  --color-accent: var(--ui-accent);
+  --color-accent-foreground: var(--ui-accent-foreground);
+  --color-destructive: var(--ui-destructive);
+  --color-destructive-foreground: var(--ui-destructive-foreground);
+  --color-border: var(--ui-border);
+  --color-input: var(--ui-input);
+  --color-ring: var(--ui-ring);
+  --radius-sm: var(--ui-radius);
+  --radius-md: var(--ui-radius);
+  --radius-lg: var(--ui-radius);
+  --radius-xl: var(--ui-radius);
+  --font-sans: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+}
