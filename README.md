@@ -82,7 +82,9 @@ it is not the product.
 
 Voting requires an account (one confirmed email = one account = one vote per
 issue), and votes are written only by the `/api/vote` endpoint — the browser
-has no write access to the votes table.
+has no write access to the votes table. **Step 1 is what makes that true.**
+Application code alone cannot enforce it: the database has to refuse the
+browser, or the browser can simply go around the endpoint.
 
 1. **Existing projects** (that ran an older `setup.sql`): run
    [`supabase/phase1-auth.sql`](supabase/phase1-auth.sql) once in the SQL
@@ -92,11 +94,25 @@ has no write access to the votes table.
 2. In the dashboard, open **Authentication → URL Configuration** and set the
    **Site URL** to where the app runs (`http://localhost:5173` in dev; your
    production URL once deployed). Confirmation and reset emails link there.
-3. Leave **Confirm email** ON (Authentication → Sign In / Up → Email). It's the
-   default, and "one account = one email" depends on it.
+3. Check that **Confirm email** is ON (Authentication → Sign In / Up → Email).
+   Don't assume — "one account = one email" collapses without it, because
+   scripted signups at throwaway addresses each earn a real vote. Step 5 reads
+   the server's actual setting rather than the documented default.
 4. Email sending uses Supabase's built-in service, which is fine for a pilot
    but strictly rate-limited (a handful of emails per hour). Configure custom
    SMTP (Authentication → Emails) before any real launch.
+5. **Verify, don't trust:**
+
+   ```bash
+   npm run security-check
+   ```
+
+   This runs the attacks an adversary would run — using only the public
+   browser key — and exits non-zero if any succeed: inserting a vote with no
+   account, rewriting someone else's vote, reading who voted what, writing to
+   the sourced-content tables, reading private deliberation chats, plus the
+   anonymous-signin and email-confirmation settings. Re-run it after any
+   policy change and before any campaign sends people to vote.
 
 ### 3. Anthropic (Deliberate section)
 
@@ -152,9 +168,14 @@ version:
 
 - Identity verification (one-person-one-vote) — unsolved, phase 2+. Email
   accounts raise the cost of cheating but do not equal people.
-- ~~Vote tampering via crafted API calls~~ — closed in Phase 1 (Aug 2026):
-  votes write only through `/api/vote` (session-verified, rate-limited);
-  RLS blocks all client writes to the votes table.
+- **Vote tampering via crafted API calls** — the code fix shipped in Phase 1
+  (votes write only through `/api/vote`, session-verified and rate-limited),
+  but it is only real on a deployment where
+  [`supabase/phase1-auth.sql`](supabase/phase1-auth.sql) has actually been run.
+  Until then the publishable key — which ships in every browser bundle — can
+  still insert votes with no account, rewrite anyone else's vote, and read who
+  voted what, all without touching `/api/vote`. **Don't take this on trust:**
+  run `npm run security-check` against the deployment and read the output.
 - Discrepancy and transparency rows are curated seed data (August 2026) with
   source fields — verify every claim and link before public launch. The
   transparency schema is built to take real sourced records without redesign.

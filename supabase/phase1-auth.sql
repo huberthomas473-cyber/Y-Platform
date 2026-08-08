@@ -17,10 +17,19 @@
 --      votes table. Aggregates only — the view exposes no voter ids.
 -- ============================================================
 
--- 1 + 2: replace the MVP policies
-drop policy if exists "anyone can vote"        on votes;
-drop policy if exists "votes can be changed"   on votes;
-drop policy if exists "vote counts are public" on votes;
+-- 1 + 2: replace the MVP policies.
+-- Dropped by enumeration rather than by name: a name-based `drop policy if
+-- exists` silently succeeds when the deployed policy is called something else,
+-- which would leave the table wide open while the migration reports success.
+do $$
+declare pol record;
+begin
+  for pol in
+    select policyname from pg_policies where schemaname = 'public' and tablename = 'votes'
+  loop
+    execute format('drop policy %I on public.votes', pol.policyname);
+  end loop;
+end $$;
 
 create policy "voters read their own votes"
   on votes for select
