@@ -141,8 +141,9 @@ export default function App() {
         <p className="footer-fine">
           Votes are anonymous to other participants and never shown per-person. One account (one
           confirmed email) casts one vote per issue; identity verification beyond email is a later
-          phase. Institutional positions and transparency rows are curated seed data — verify
-          sources before treating them as authoritative.
+          phase, so several addresses can still mean several votes. Institutional positions and
+          transparency rows were source-verified in August 2026 — every claim links to its
+          source, and the verification logs are public.
         </p>
       </footer>
 

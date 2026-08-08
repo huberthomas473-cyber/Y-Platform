@@ -168,16 +168,22 @@ version:
 
 - Identity verification (one-person-one-vote) — unsolved, phase 2+. Email
   accounts raise the cost of cheating but do not equal people.
-- **Vote tampering via crafted API calls** — the code fix shipped in Phase 1
-  (votes write only through `/api/vote`, session-verified and rate-limited),
-  but it is only real on a deployment where
-  [`supabase/phase1-auth.sql`](supabase/phase1-auth.sql) has actually been run.
-  Until then the publishable key — which ships in every browser bundle — can
-  still insert votes with no account, rewrite anyone else's vote, and read who
-  voted what, all without touching `/api/vote`. **Don't take this on trust:**
-  run `npm run security-check` against the deployment and read the output.
-- Discrepancy and transparency rows are curated seed data (August 2026) with
-  source fields — verify every claim and link before public launch. The
-  transparency schema is built to take real sourced records without redesign.
+- ~~Vote tampering via crafted API calls~~ — closed in Phase 1, and closure is
+  **per deployment, not per commit**. The code fix (votes write only through
+  `/api/vote`, session-verified and rate-limited) is inert until
+  [`supabase/phase1-auth.sql`](supabase/phase1-auth.sql) has been run on that
+  database; before it is, the publishable key that ships in every browser
+  bundle can insert votes with no account, rewrite anyone else's vote, and read
+  who voted what — without ever touching `/api/vote`. **Never take this on
+  trust:** run `npm run security-check` against the deployment. It performs
+  those exact attacks and exits non-zero if any succeed. *(Reference
+  deployment: verified 8/8 on 8 Aug 2026.)*
+- ~~Discrepancy and transparency rows are unverified seed data~~ — closed in
+  Phase 2 (7 Aug 2026): all 12 rows were checked against primary or reputable
+  sources, two were corrected and one unverifiable citation was deleted.
+  Per-claim logs live in [`docs/source-library/`](docs/source-library/) and the
+  standards in [`docs/editorial-rulebook.md`](docs/editorial-rulebook.md).
+  Claims carry a re-verification date; the Gaza issue is flagged for
+  retire-and-replace because its premise went stale.
 - Voice-first input, multi-language, moderated public deliberation walls,
   admin tooling: future phases.

@@ -53,8 +53,8 @@ export default function Discrepancy({ issues, totals }) {
         is the point.
       </p>
       <p className="sample-note">
-        Institutional positions are curated seed data (August 2026) with sources — verify before
-        citing.
+        Every institutional position below was verified against its source on 7 August 2026, and
+        carries a re-verification date. Follow the source link before citing.
       </p>
       {error && (
         <div className="notice notice-error" role="alert">

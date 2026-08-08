@@ -36,8 +36,8 @@ export default function Transparency({ issues }) {
         Who owns whom, and who funds whom — the connections behind the issues on the ballot.
       </p>
       <p className="sample-note">
-        Illustrative sample rows. The schema is built for verified, sourced records; replace
-        these before public launch.
+        Publicly documented ownership and funding facts, each verified against its source on
+        7 August 2026. Qualitative descriptions only — no estimated or inferred figures.
       </p>
       {error && (
         <div className="notice notice-error" role="alert">
